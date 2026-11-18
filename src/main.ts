@@ -13,7 +13,7 @@ import { iconImg } from './engine/icons';
 import { InventoryUI } from './ui/inventory';
 import { DialogueUI } from './ui/dialogue';
 import { openKeypad, openScreen } from './ui/overlays';
-import { confirmDialog, howToPlay } from './ui/dialogs';
+import { choiceDialog, confirmDialog, howToPlay } from './ui/dialogs';
 
 // ───────────────────────── profile ─────────────────────────
 
@@ -41,6 +41,16 @@ profile.carry = profile.carry.filter((id) => ITEMS[id]);
 profile.collection = profile.collection.filter((id) => ITEMS[id]);
 for (const rs of Object.values(profile.rooms)) rs.inventory = rs.inventory.filter((id) => ITEMS[id]);
 audio.setMuted(profile.muted);
+
+/** The room currently being played (so the lobby can offer "Back to game"). */
+let activeRoom: RoomDef | null = null;
+/** Profile as it was when this play session started or was last saved by hand: what "discard" restores. */
+let snapshot: string | null = null;
+
+function endSession() {
+  activeRoom = null;
+  snapshot = null;
+}
 
 const app = document.getElementById('app')!;
 
@@ -77,12 +87,14 @@ function saveSummary(): string {
 }
 
 function continueGame() {
+  endSession();
   const room = profile.lastRoom && profile.rooms[profile.lastRoom] ? PLAYABLE[profile.lastRoom] : undefined;
   if (room) startRoom(room);
   else lobby();
 }
 
 function wipeSave() {
+  endSession();
   profile.completed = [];
   profile.carry = [];
   profile.collection = [];
@@ -142,13 +154,13 @@ function lobby() {
   const done = profile.completed.length;
   s.innerHTML = `
     <header class="lobby-head">
-      <button class="btn small ghost" data-act="back">← Title</button>
+      <button class="btn small ghost" data-act="back">${activeRoom ? '← Back to game' : '← Title'}</button>
       <div><h1>THE LOBBY</h1><p>Company HQ · ${done}/${CATALOG.length} rooms escaped</p></div>
       <button class="btn small ghost" data-act="mute">${profile.muted ? '🔇 Sound off' : '🔊 Sound on'}</button>
     </header>
     <section class="carry panel"><h2>CARRIED BETWEEN ROOMS</h2><div class="carry-items"></div></section>
     <div class="floors"></div>`;
-  s.querySelector('[data-act=back]')!.addEventListener('click', titleScreen);
+  s.querySelector('[data-act=back]')!.addEventListener('click', () => (activeRoom ? startRoom(activeRoom) : titleScreen()));
   s.querySelector('[data-act=mute]')!.addEventListener('click', (e) => {
     profile.muted = !profile.muted;
     audio.setMuted(profile.muted);
@@ -216,6 +228,8 @@ function lobby() {
 
 function startRoom(room: RoomDef, fresh = false) {
   audio.playTrack(room.music);
+  if (snapshot === null) snapshot = JSON.stringify(profile);
+  activeRoom = room;
   profile.lastRoom = room.id;
   const finished = profile.completed.includes(room.id);
   let state = !fresh && !finished ? profile.rooms[room.id] : undefined;
@@ -231,7 +245,10 @@ function startRoom(room: RoomDef, fresh = false) {
   header.innerHTML = `
     <div class="titles"><h1></h1><p class="objective"></p></div>
     <div class="hud-bar">
-    <button class="btn small ghost" data-act="lobby">← Lobby</button>
+    <div class="hud-left">
+      <button class="btn small ghost" data-act="lobby">← Lobby</button>
+      <button class="btn small ghost" data-act="quit">Quit game</button>
+    </div>
     <div class="hud-btns">
       <button class="btn small ghost" data-act="save" title="Save your progress now">Save</button>
       <button class="btn small ghost" data-act="how" title="How to play">?</button>
@@ -416,8 +433,39 @@ function startRoom(room: RoomDef, fresh = false) {
       profile.lastRoom = room.id;
       profile.lastSaved = Date.now();
       saveProfile();
+      snapshot = JSON.stringify(profile);
       toast(`Saved: Level ${levelNo(room.id)}, ${room.name}`, 'good');
       audio.sfx('good');
+    }
+    if (act === 'quit') {
+      choiceDialog(
+        modalHost,
+        'QUIT TO THE TITLE SCREEN?',
+        'Save your progress first, or quit without saving to go back to how things were at your last save.',
+        [
+          {
+            label: 'Save & quit',
+            primary: true,
+            onClick: () => {
+              profile.lastRoom = room.id;
+              profile.lastSaved = Date.now();
+              saveProfile();
+              endSession();
+              titleScreen();
+            },
+          },
+          {
+            label: 'Quit without saving',
+            onClick: () => {
+              if (snapshot) Object.assign(profile, JSON.parse(snapshot));
+              saveProfile();
+              endSession();
+              titleScreen();
+            },
+          },
+          { label: 'Cancel', onClick: () => {} },
+        ],
+      );
     }
     if (act === 'how') howToPlay(modalHost);
     if (act === 'reset') confirmDialog(modalHost, 'RESTART THIS ROOM?', 'Everything you found in this room is put back. Items you carried in stay with you.', 'Restart room', () => startRoom(room, true));
@@ -488,6 +536,7 @@ function startRoom(room: RoomDef, fresh = false) {
     profile.lastRoom = undefined;
     profile.lastSaved = Date.now();
     saveProfile();
+    endSession();
     audio.sfx('unlock');
     const optionalFound = room.optional.filter((id) => gained.includes(id) || profile.collection.includes(id) || id === 'golden_sticky' && session.has(id)).length;
     const secs = Math.round((Date.now() - startedAt) / 1000);

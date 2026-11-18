@@ -64,3 +64,26 @@ export function howToPlay(host: HTMLElement) {
   );
   card.querySelector('[data-c]')!.addEventListener('click', close);
 }
+
+/** In-page dialog with any number of equal buttons. */
+export function choiceDialog(
+  host: HTMLElement,
+  title: string,
+  text: string,
+  choices: { label: string; primary?: boolean; onClick: () => void }[],
+) {
+  const { card, close } = shell(host, `<h2></h2><p></p><div class="btns"></div>`);
+  card.querySelector('h2')!.textContent = title;
+  card.querySelector('p')!.textContent = text;
+  const row = card.querySelector('.btns')!;
+  for (const c of choices) {
+    const b = document.createElement('button');
+    b.className = `btn ${c.primary ? 'big' : 'ghost'}`;
+    b.textContent = c.label;
+    b.addEventListener('click', () => {
+      close();
+      c.onClick();
+    });
+    row.appendChild(b);
+  }
+}

@@ -335,3 +335,7 @@ img.fly { position: fixed; width: 48px; height: 48px; z-index: 99; pointer-event
 .room-card.done .rs { color: var(--mustard); }
 .room-card .rs { letter-spacing: 0.5px; }
 .tag.k-key, .tag.k-digital, .tag.k-document, .tag.k-clue, .tag.k-funny, .tag.k-tool { background: var(--ink); }
+
+.hud-left { display: flex; gap: 8px; flex-wrap: wrap; }
+.hud-bar .hud-left .btn { white-space: nowrap; }
+@media (max-width: 560px) { .hud-bar { flex-wrap: wrap; } }
