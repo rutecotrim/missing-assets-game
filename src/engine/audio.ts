@@ -1,11 +1,13 @@
 import type { SfxName } from '../core/types';
+import { TRACKS } from '../data/music';
 
 /** Tiny WebAudio chiptune kit: sound effects + a gentle looping tune. No audio files. */
 class Audio8 {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
   muted = false;
-  private musicOn = false;
+  private current = '';
+  private timer = 0;
 
   private ensure() {
     if (!this.ctx) {
@@ -80,26 +82,24 @@ class Audio8 {
     }
   }
 
-  /** A relaxed, slightly wonky office-lounge loop. */
-  startMusic() {
-    if (this.musicOn) return;
+  /** Switch to a track (no-op if it is already playing). */
+  playTrack(id: string) {
+    if (this.current === id) return;
+    const track = TRACKS[id];
     const ctx = this.ensure();
-    if (!ctx) return;
-    this.musicOn = true;
-    const bass = [110, 110, 82.4, 82.4, 98, 98, 73.4, 73.4];
-    const lead = [392, 0, 330, 392, 0, 494, 440, 0, 392, 0, 330, 294, 0, 330, 0, 0];
+    if (!track || !ctx) return;
+    this.current = id;
+    window.clearInterval(this.timer);
     let step = 0;
-    const bpm = 88;
-    const stepDur = 60 / bpm / 2;
-    const tick = () => {
+    const stepDur = 60 / track.bpm / 2;
+    this.timer = window.setInterval(() => {
       if (!this.muted) {
-        if (step % 2 === 0) this.tone(bass[(step / 2) % bass.length], 0, stepDur * 1.8, 'triangle', 0.1);
-        const l = lead[step % lead.length];
-        if (l) this.tone(l, 0, stepDur * 0.9, 'square', 0.03);
+        if (step % 2 === 0) this.tone(track.bass[(step / 2) % track.bass.length], 0, stepDur * 1.8, track.bassWave, 0.1);
+        const l = track.lead[step % track.lead.length];
+        if (l) this.tone(l, 0, stepDur * 0.9, track.leadWave, track.leadVol);
       }
       step++;
-    };
-    window.setInterval(tick, stepDur * 1000);
+    }, stepDur * 1000);
   }
 }
 

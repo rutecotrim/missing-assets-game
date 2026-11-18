@@ -205,6 +205,8 @@ export interface RoomDef {
   tagline: string;
   /** Shown in the HUD. */
   objective: string;
+  /** Track id from data/music.ts. */
+  music: string;
   size: { w: number; d: number };
   palette: RoomPalette;
   spawn: Tile;

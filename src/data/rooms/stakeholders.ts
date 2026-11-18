@@ -643,6 +643,7 @@ export const stakeholdersRoom: RoomDef = {
   category: 'Product & Management',
   tagline: 'The meeting that could have been an email.',
   objective: 'Find a way out of the alignment meeting.',
+  music: 'stakeholders',
   size: { w: 10, d: 10 },
   palette: {
     floorA: '#5f8f9b',

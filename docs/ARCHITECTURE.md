@@ -24,6 +24,7 @@ tests        headless tests that solve the room through the real rules engine
 1. Create `src/data/rooms/<id>.ts` exporting a `RoomDef` (palette, spawn, objects, dialogues, keypads, screens, decals).
 2. Register it in `src/data/rooms/index.ts` (`PLAYABLE`); the lobby already lists it in `CATALOG`.
 3. New items → `items.ts` (+ an icon in `engine/icons.ts`); new combos → `recipes.ts`.
+3b. Music: each room sets `music: "<trackId>"`; add a track in `src/data/music.ts` to give it its own song.
 4. New furniture → add a painter to `PROPS` in `engine/props.ts` (compose `g.box`, `g.faceRect`, `g.wallRect`).
 5. Copy `tests/stakeholders.test.ts` to prove the room is solvable.
 

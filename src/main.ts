@@ -78,7 +78,6 @@ function titleScreen() {
   }
   s.querySelector('[data-act=play]')!.addEventListener('click', () => {
     audio.sfx('pickup');
-    audio.startMusic();
     lobby();
   });
   s.querySelector('[data-act=reset]')?.addEventListener('click', () => {
@@ -97,6 +96,7 @@ function titleScreen() {
 // ───────────────────────── lobby ─────────────────────────
 
 function lobby() {
+  audio.playTrack('lobby');
   const s = el('main', 'screen lobby');
   const done = profile.completed.length;
   s.innerHTML = `
@@ -170,6 +170,7 @@ function lobby() {
 // ───────────────────────── game ─────────────────────────
 
 function startRoom(room: RoomDef, fresh = false) {
+  audio.playTrack(room.music);
   const finished = profile.completed.includes(room.id);
   let state = !fresh && !finished ? profile.rooms[room.id] : undefined;
   const isNew = !state;
@@ -297,7 +298,6 @@ function startRoom(room: RoomDef, fresh = false) {
   scene.canvas.addEventListener('pointermove', (e) => scene.hover(e.clientX, e.clientY));
   scene.canvas.addEventListener('pointerleave', () => scene.clearHover());
   scene.canvas.addEventListener('click', (e) => {
-    audio.startMusic();
     const armed = inv.armedId;
     if (armed) {
       const hit = scene.dropItem(armed, e.clientX, e.clientY);
