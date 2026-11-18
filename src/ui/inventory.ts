@@ -43,7 +43,7 @@ export class InventoryUI {
       <div class="panel-head"><h2>BACKPACK</h2><span class="count"></span></div>
       <div class="grid" role="list"></div>
       <div class="detail"></div>
-      <p class="tip-line">Drag an item onto the room, or onto another item to combine them.</p>`;
+      <p class="tip-line">Drag an item onto something in the room to use it.</p>`;
     this.grid = this.el.querySelector('.grid')!;
     this.detail = this.el.querySelector('.detail')!;
     this.count = this.el.querySelector('.count')!;
@@ -186,9 +186,6 @@ export class InventoryUI {
       d.ghost.style.transform = `translate(${e.clientX - 28}px, ${e.clientY - 28}px)`;
       const over = this.hooks.isOverStage(e.clientX, e.clientY);
       this.hooks.dragOverStage(e.clientX, e.clientY, over, d.id);
-      const target = this.slotUnder(e.clientX, e.clientY);
-      this.grid.querySelectorAll('.slot.target').forEach((s) => s.classList.remove('target'));
-      if (target && target.dataset.item !== d.id) target.classList.add('target');
     }
   };
 
@@ -206,22 +203,12 @@ export class InventoryUI {
       this.render();
       return;
     }
-    const slot = this.slotUnder(e.clientX, e.clientY);
-    if (slot?.dataset.item && slot.dataset.item !== d.id) {
-      this.session.combine(d.id, slot.dataset.item);
-      return;
-    }
     if (this.hooks.isOverStage(e.clientX, e.clientY)) {
       const hit = this.hooks.dropOnStage(d.id, e.clientX, e.clientY);
       if (!hit) this.flash(d.id, 'bad');
       if (!hit) this.say('Nothing there to use it on. Try dropping it on something in the room.');
     }
   };
-
-  private slotUnder(x: number, y: number): HTMLElement | null {
-    const el = document.elementFromPoint(x, y)?.closest('.slot') as HTMLElement | null;
-    return el && this.grid.contains(el) ? el : null;
-  }
 
   private onKey = (e: KeyboardEvent) => {
     if (e.key === 'Escape') this.disarm();

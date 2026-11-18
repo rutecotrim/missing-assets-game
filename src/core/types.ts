@@ -40,7 +40,6 @@ export type SfxName =
   | 'pickup'
   | 'good'
   | 'bad'
-  | 'combine'
   | 'unlock'
   | 'beep'
   | 'door'
@@ -73,17 +72,6 @@ export interface ItemDef {
   collectible?: boolean;
   /** Funny lines used when the item is used on something that doesn't care. */
   nope?: string[];
-}
-
-export interface Recipe {
-  a: string;
-  b: string;
-  /** Items consumed by the combination (default: both). */
-  consume?: string[];
-  gives: string;
-  say: string;
-  /** Marks a combination that is a joke / non-essential. */
-  optional?: boolean;
 }
 
 // ───────────────────────── Room objects ─────────────────────────
@@ -266,4 +254,3 @@ export type GameEvent =
   | { type: 'beat' }
   | { type: 'escape' }
   | { type: 'use-result'; ok: boolean; item: string; object: string }
-  | { type: 'combine-result'; ok: boolean; a: string; b: string; gives?: string };

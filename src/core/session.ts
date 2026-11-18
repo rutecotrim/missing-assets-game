@@ -9,7 +9,6 @@ import type {
   ItemDef,
   KeypadDef,
   ObjectDef,
-  Recipe,
   RoomDef,
   RoomState,
   Rule,
@@ -17,7 +16,6 @@ import type {
   ScreenView,
 } from './types';
 import { ITEMS } from '../data/items';
-import { RECIPES } from '../data/recipes';
 
 export const DEFAULT_SLOTS = 16;
 
@@ -154,31 +152,6 @@ export class Session {
     this.queueLine('You', line);
     this.changed();
     return false;
-  }
-
-  recipeFor(a: string, b: string): Recipe | undefined {
-    return RECIPES.find((r) => (r.a === a && r.b === b) || (r.a === b && r.b === a));
-  }
-
-  /** Combine two inventory items. */
-  combine(a: string, b: string): boolean {
-    if (a === b || !this.has(a) || !this.has(b)) return false;
-    const r = this.recipeFor(a, b);
-    if (!r) {
-      this.emit({ type: 'sfx', name: 'bad' });
-      this.emit({ type: 'combine-result', ok: false, a, b });
-      this.emit({ type: 'toast', text: `${this.item(a).name} + ${this.item(b).name}: no luck.`, tone: 'bad' });
-      this.queueLine('You', "Those two don't go together. Not even with enough duct tape.");
-      this.changed();
-      return false;
-    }
-    for (const id of r.consume ?? [r.a, r.b]) this.removeItem(id);
-    this.addItem(r.gives);
-    this.emit({ type: 'sfx', name: 'combine' });
-    this.emit({ type: 'combine-result', ok: true, a, b, gives: r.gives });
-    this.queueLine('You', r.say);
-    this.changed();
-    return true;
   }
 
   // ─────────── beats (narration, dialogue, modals) ───────────

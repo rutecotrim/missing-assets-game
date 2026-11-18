@@ -4,14 +4,13 @@ import type { Dialogue, ObjectDef, RoomDef, Rule } from '../../core/types';
  * THE STAKEHOLDERS ROOM — the first playable room.
  *
  * Solution path (spoilers!):
- *   sofa → USB stick          whiteboard → tape        bin → torn user flow
- *   tape + torn flow → user flow (taped)
+ *   sofa → USB stick          bin → user flow
  *   table → notes, then a mug   mug → coffee machine → coffee
  *   coffee → Derek → exec badge   badge → PC (unlocks it)
  *   USB → PC     user flow → printer-scanner (page 2 arrives)
  *   PC now shows the cabinet passcode → cabinet → exit key → door
  * Optional: rubber duck (plant), stress ball (wobbly chair) → Brenda → golden
- * sticky note, biscuits (cabinet), and a daft duck+ball combination.
+ * sticky note, biscuits (cabinet).
  */
 
 const say = (text: string, who?: string) => ({ do: 'say' as const, text, who });
@@ -86,16 +85,9 @@ const objects: ObjectDef[] = [
     sprite: 'whiteboard',
     wall: { side: 'left', at: 1.3, w: 3.5, z: 18, h: 36 },
     stand: { x: 1, y: 3 },
-    look: searchable(
-      [
-        {
-          flag: 'got_tape',
-          text: 'The board: "Q3 PRIORITIES — 1) Make it pop. 2) Do it faster. 3) Everything (P0)." Taped to the frame: a spare roll of masking tape.',
-          item: 'tape',
-        },
-      ],
-      '"Everything (P0)" is still up there. Someone has added "(but also P1)".',
-    ),
+    look: [
+      { do: [say('The board: "Q3 PRIORITIES — 1) Make it pop. 2) Do it faster. 3) Everything (P0)." Someone has added "(but also P1)".')] },
+    ],
     nope: "You hold it up to the whiteboard. It's already too full to take any more feedback.",
   },
   {
@@ -312,9 +304,9 @@ const objects: ObjectDef[] = [
     look: searchable(
       [
         {
-          flag: 'got_torn',
-          text: "Crumpled paper, a banana peel, and half a printed user flow. Somebody really did not like the checkout step. You fish out both halves.",
-          item: 'torn_flow',
+          flag: 'got_flow',
+          text: "Crumpled paper, a banana peel, and a printed user flow. Somebody really did not like the checkout step. You fish it out and smooth it flat.",
+          item: 'user_flow',
         },
       ],
       'Only the banana peel remains. At this point it is load-bearing.',
@@ -399,13 +391,10 @@ const objects: ObjectDef[] = [
             set('scanned'),
             { do: 'sfx', name: 'beep' },
             { do: 'fx', kind: 'sparkle' },
-            say('You lay the taped-up user flow on the glass. The scanner hums, thinks about it, and beeps: "SCAN COMPLETE — Stakeholder_Alignment_FINAL_v7.pdf (page 2) sent to room PC." You take your flow back.'),
+            say('You lay the crumpled user flow on the glass. The scanner hums, thinks about it, and beeps: "SCAN COMPLETE — Stakeholder_Alignment_FINAL_v7.pdf (page 2) sent to room PC." You take your flow back.'),
           ],
         },
         { do: [say('It has already been scanned once. The printer refuses to do the same thing twice. Typical.')] },
-      ],
-      torn_flow: [
-        { do: [say('The printer rejects it. "PAPER JAM: the paper is already in two pieces." You feel seen.')] },
       ],
     },
     nope: 'The printer flashes "PC LOAD LETTER". Nobody knows what that means.',
@@ -458,12 +447,6 @@ const objects: ObjectDef[] = [
         {
           when: { not: { flag: 'brenda_happy' } },
           do: [take('stress_ball'), set('brenda_happy'), { do: 'talk', dialogue: 'brenda_thanks' }],
-        },
-      ],
-      squeezy_duck: [
-        {
-          when: { not: { flag: 'brenda_happy' } },
-          do: [take('squeezy_duck'), set('brenda_happy'), { do: 'talk', dialogue: 'brenda_thanks_duck' }],
         },
       ],
     },
@@ -576,18 +559,6 @@ const dialogues: Dialogue[] = [
     },
   },
   {
-    id: 'brenda_thanks_duck',
-    start: [{ node: 'a' }],
-    nodes: {
-      a: { who: 'Brenda', text: '*squeak* ...a stress ball AND a duck? You are the most thoughtful person on this entire floor.', next: 'b' },
-      b: {
-        who: 'Brenda',
-        text: 'Here, take this. It was stuck to my shoe since the offsite. A "Golden Sticky Note". Apparently for alignment excellence.',
-        do: [give('golden_sticky')],
-      },
-    },
-  },
-  {
     id: 'sam',
     start: [{ node: 'hi' }],
     nodes: {
@@ -619,7 +590,7 @@ const dialogues: Dialogue[] = [
       },
       hintC: {
         who: 'Sam',
-        text: "If the PC says a page is missing, maybe it's on paper somewhere? The printer-scanner is right there. And things that tear... can be taped. I think. I'm an intern.",
+        text: "If the PC says a page is missing, maybe it's on paper somewhere? The printer-scanner is right there, and I saw somebody binning a printed user flow. I think. I'm an intern.",
         next: 'hi',
       },
       hintD: {

@@ -449,7 +449,7 @@ const clock: Painter = ({ g, o, t }) => {
   px(g.c, sx, sy, tick);
 };
 
-const whiteboard: Painter = ({ g, o, flag }) => {
+const whiteboard: Painter = ({ g, o }) => {
   const { side, u0, u1, z0, z1 } = wallBox(o);
   g.wallRect(side, u0 - 2, u1 + 2, z0 - 4, z1 + 2, '#c8ccd8', INK);
   g.wallRect(side, u0, u1, z0, z1, '#fbfbf7');
@@ -478,21 +478,6 @@ const whiteboard: Painter = ({ g, o, flag }) => {
   g.wallRect(side, u0 - 2, u1 + 2, z0 - 7, z0 - 4, '#a9aebd', INK);
   g.wallRect(side, u0 + 8, u0 + 20, z0 - 5, z0 - 3, '#e8453c');
   g.wallRect(side, u0 + 22, u0 + 32, z0 - 5, z0 - 3, '#3a6ea5');
-  if (!flag('got_tape')) {
-    const tu = u1 - 20;
-    g.wallPoly(
-      side,
-      [
-        [tu, z0 - 4],
-        [tu + 3, z0 + 3],
-        [tu + 9, z0 + 3],
-        [tu + 12, z0 - 4],
-      ],
-      '#f1deb4',
-      INK,
-    );
-    g.wallRect(side, tu + 4, tu + 8, z0 - 2, z0, '#b89e6a');
-  }
 };
 
 const poster: Painter = ({ g, o }) => {

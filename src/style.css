@@ -133,8 +133,9 @@ body.dragging { cursor: grabbing; }
 body.dragging * { user-select: none; }
 
 .tip {
-  position: absolute; z-index: 5; pointer-events: none; transform: translateY(-100%);
-  background: var(--ink); color: var(--cream); padding: 5px 9px; font-size: 15px; white-space: nowrap;
+  position: absolute; z-index: 5; pointer-events: none; left: 0; top: 0;
+  background: var(--ink); color: var(--cream); padding: 5px 9px; font-size: 15px; line-height: 1.2;
+  width: max-content; max-width: calc(100% - 8px); white-space: normal;
   box-shadow: 0 0 0 2px var(--mustard);
 }
 .status { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: var(--teal); color: var(--ink); padding: 6px 12px; box-shadow: 0 0 0 3px var(--ink); font-size: 15px; z-index: 6; white-space: nowrap; max-width: 96%; overflow: hidden; text-overflow: ellipsis; }

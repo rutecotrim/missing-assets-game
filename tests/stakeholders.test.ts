@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { Session, freshRoomState } from '../src/core/session';
 import { stakeholdersRoom } from '../src/data/rooms/stakeholders';
 import { ITEMS } from '../src/data/items';
-import { RECIPES } from '../src/data/recipes';
 import type { GameEvent } from '../src/core/types';
 
 function start(carry: string[] = []) {
@@ -25,10 +24,10 @@ function start(carry: string[] = []) {
 
 describe('data integrity', () => {
   it('every item referenced anywhere exists', () => {
-    const json = JSON.stringify(stakeholdersRoom) + JSON.stringify(RECIPES);
+    const json = JSON.stringify(stakeholdersRoom);
     const ids = [...json.matchAll(/"(?:item|give|take|gives|a|b)":"([a-z_]+)"/g)].map((m) => m[1]);
     for (const id of ids) {
-      if (['tape'].includes(id) || ITEMS[id]) continue;
+      if (ITEMS[id]) continue;
       // `a`/`b` also match unrelated keys; only fail for things that look like items
       if (/^[a-z_]+$/.test(id) && !['x', 'y', 'w', 'd'].includes(id)) expect(ITEMS[id], id).toBeDefined();
     }
@@ -53,11 +52,8 @@ describe('Stakeholders Room', () => {
     };
 
     click('sofa'); // usb
-    click('whiteboard'); // tape
-    click('bin'); // torn flow
-    expect(s.combine('tape', 'torn_flow')).toBe(true);
+    click('bin'); // user flow
     expect(s.has('user_flow')).toBe(true);
-    expect(s.has('tape')).toBe(false);
 
     click('table'); // notes
     click('table'); // mug
@@ -114,18 +110,6 @@ describe('Stakeholders Room', () => {
     expect(s.has('stress_ball')).toBe(false);
   });
 
-  it('the silly duck combo also satisfies Brenda', () => {
-    const { s, drain } = start();
-    s.inspect('chair_wobbly');
-    drain();
-    s.inspect('plant');
-    drain();
-    expect(s.combine('stress_ball', 'rubber_duck')).toBe(true);
-    s.useItemOn('squeezy_duck', 'brenda');
-    drain();
-    expect(s.has('golden_sticky')).toBe(true);
-  });
-
   it('wrong uses give feedback and keep the item', () => {
     const { s, drain, events } = start();
     s.inspect('sofa');
@@ -133,17 +117,6 @@ describe('Stakeholders Room', () => {
     expect(s.useItemOn('usb', 'exit_door')).toBe(false);
     expect(s.has('usb')).toBe(true);
     expect(events.some((e) => e.type === 'use-result' && !e.ok)).toBe(true);
-    expect(s.combine('usb', 'usb')).toBe(false);
-  });
-
-  it('refuses nonsense combinations', () => {
-    const { s, drain } = start();
-    s.inspect('sofa');
-    drain();
-    s.inspect('whiteboard');
-    drain();
-    expect(s.combine('usb', 'tape')).toBe(false);
-    expect(s.has('usb') && s.has('tape')).toBe(true);
   });
 
   it('the cabinet rejects wrong codes with quips', () => {
@@ -156,10 +129,12 @@ describe('Stakeholders Room', () => {
 
 describe('backpack size', () => {
   it('uses the room slot count and refuses overflow', () => {
-    const { s } = start();
-    expect(s.capacity).toBe(12);
-    for (const id of ['notes', 'usb', 'tape', 'torn_flow', 'mug', 'badge', 'stress_ball', 'rubber_duck', 'golden_sticky', 'biscuits', 'exit_key', 'coffee'].map((i) => (i === 'notes' ? 'meeting_notes' : i))) s.addItem(id);
-    expect(s.inventory.length).toBe(12);
-    expect(s.addItem('user_flow')).toBe(false);
+    expect(start().s.capacity).toBe(12);
+    const small = { ...stakeholdersRoom, slots: 2 };
+    const s = new Session(small, freshRoomState(small, []));
+    expect(s.addItem('usb')).toBe(true);
+    expect(s.addItem('mug')).toBe(true);
+    expect(s.addItem('badge')).toBe(false);
+    expect(s.inventory).toEqual(['usb', 'mug']);
   });
 });

@@ -38,13 +38,12 @@ export function howToPlay(host: HTMLElement) {
   const { card, close } = shell(
     host,
     `<h2>HOW TO PLAY</h2>
-    <p class="lead">You are a designer trapped in a meeting room. Explore, collect things, combine them, and find the way out.</p>
+    <p class="lead">You are a designer trapped in a meeting room. Explore, collect things, use them on stuff, and find the way out.</p>
     <div class="how">
       <section><h3>MOUSE</h3><ul>
         <li><b>Click the floor</b> to walk.</li>
         <li><b>Click objects and people</b> to look, search or talk.</li>
         <li><b>Drag an item</b> from the backpack onto something in the room to use it.</li>
-        <li><b>Drag an item onto another item</b> to combine them.</li>
         <li><b>Click an item</b> to read about it. <b>Examine</b> gives more detail.</li>
         <li><b>Use on…</b> is the tap-friendly way: pick an item, press the button, click a target.</li>
       </ul></section>

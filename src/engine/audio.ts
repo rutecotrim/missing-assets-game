@@ -59,9 +59,6 @@ class Audio8 {
       case 'bad':
         this.tone(220, 0, 0.18, 'sawtooth', 0.12, 110);
         break;
-      case 'combine':
-        [392, 523, 659, 784, 1047].forEach((f, i) => this.tone(f, i * 0.05, 0.12, 'triangle', 0.16));
-        break;
       case 'unlock':
         [523, 659, 784, 1047, 1319].forEach((f, i) => this.tone(f, i * 0.09, 0.2, 'square', 0.1));
         break;

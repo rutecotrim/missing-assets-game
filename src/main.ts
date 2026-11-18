@@ -36,6 +36,10 @@ function saveProfile() {
   }
 }
 const profile = loadProfile();
+// Drop items from older saves that no longer exist.
+profile.carry = profile.carry.filter((id) => ITEMS[id]);
+profile.collection = profile.collection.filter((id) => ITEMS[id]);
+for (const rs of Object.values(profile.rooms)) rs.inventory = rs.inventory.filter((id) => ITEMS[id]);
 audio.setMuted(profile.muted);
 
 const app = document.getElementById('app')!;
@@ -106,7 +110,7 @@ function titleScreen() {
     <p class="credit">An isometric adventure about surviving product design.</p>`;
   if (save) s.querySelector('.save-info')!.textContent = saveSummary();
   const art = s.querySelector('.title-art')!;
-  for (const icon of ['usb', 'notes', 'coffee', 'badge', 'tape', 'duck', 'key', 'flow']) {
+  for (const icon of ['usb', 'notes', 'coffee', 'badge', 'coffee', 'duck', 'key', 'flow']) {
     const i = iconImg(icon, 'float');
     i.style.setProperty('--d', `${Math.random() * 3}s`);
     art.appendChild(i);
@@ -283,10 +287,6 @@ function startRoom(room: RoomDef, fresh = false) {
         inv?.flash(e.item, e.ok ? 'good' : 'bad');
         scene?.handleEvent(e);
         break;
-      case 'combine-result':
-        inv?.flash(e.a, e.ok ? 'good' : 'bad');
-        inv?.flash(e.b, e.ok ? 'good' : 'bad');
-        break;
       default:
         scene?.handleEvent(e);
     }
@@ -302,9 +302,20 @@ function startRoom(room: RoomDef, fresh = false) {
       const armed = inv.armedId ?? dragItem;
       tip.textContent = armed ? `Use ${ITEMS[armed].name} on ${o.name}` : o.name;
       tip.classList.remove('hidden');
+      // Keep the label fully inside the stage: flip to the left / below the cursor when it would overflow.
       const r = stage.getBoundingClientRect();
-      tip.style.left = `${cx - r.left + 14}px`;
-      tip.style.top = `${cy - r.top - 6}px`;
+      const w = tip.offsetWidth;
+      const h = tip.offsetHeight;
+      const px_ = cx - r.left;
+      const py = cy - r.top;
+      let left = px_ + 14;
+      if (left + w > r.width - 4) left = px_ - 14 - w;
+      left = Math.max(4, Math.min(left, r.width - w - 4));
+      let top = py - 6 - h;
+      if (top < 4) top = py + 22;
+      top = Math.max(4, Math.min(top, r.height - h - 4));
+      tip.style.left = `${Math.round(left)}px`;
+      tip.style.top = `${Math.round(top)}px`;
     },
     onEscaped: () => finish(),
     onEvent,
