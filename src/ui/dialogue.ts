@@ -133,10 +133,15 @@ export class DialogueUI {
         body.appendChild(ch);
       }
     }
-    const more = document.createElement('span');
-    more.className = 'more';
-    more.textContent = '▼';
-    body.appendChild(more);
+    const hasChoices = b.kind === 'node' && this.session.visibleChoices(this.session.dialogueNode(b)).length > 0;
+    if (!hasChoices) {
+      const last = this.session.beats.length === 1 && (b.kind === 'line' || !this.session.dialogueNode(b).next);
+      const more = document.createElement('button');
+      more.className = `more ${last ? 'close' : ''}`;
+      more.innerHTML = last ? 'Close <b>✕</b>' : 'Continue <b>▶</b>';
+      more.title = 'Click, or press Space / Enter';
+      body.appendChild(more);
+    }
     this.el.appendChild(body);
 
     this.full = text;
