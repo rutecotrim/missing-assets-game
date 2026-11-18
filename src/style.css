@@ -173,7 +173,7 @@ body.dragging * { user-select: none; }
 @keyframes blink { 50% { opacity: 0; } }
 
 /* ───────── inventory ───────── */
-.inventory { position: sticky; top: 8px; }
+.inventory { position: static; }
 .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .panel-head .count { font-family: var(--font); font-weight: 700; font-size: 20px; letter-spacing: 1px; color: var(--ink); background: #fff; padding: 2px 8px; box-shadow: 0 0 0 2px var(--ink); }
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }

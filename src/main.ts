@@ -442,10 +442,13 @@ function startRoom(room: RoomDef, fresh = false) {
     else w = (LW * exact) / dpr;
     stage.style.width = `${Math.floor(w)}px`;
     col.style.width = `${Math.floor(w)}px`;
+    // Line the backpack up with the top of the game area (just below the header).
+    inv.el.style.marginTop = wide ? `${header.offsetHeight}px` : '0';
     stage.style.height = `${Math.floor((w * LH) / LW)}px`;
   };
   const ro = new ResizeObserver(fit);
   ro.observe(stageWrap);
+  ro.observe(header);
   window.addEventListener('resize', fit);
 
   // toasts + flying icons
