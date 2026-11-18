@@ -230,14 +230,16 @@ function startRoom(room: RoomDef, fresh = false) {
   const root = el('div', 'game');
   const header = el('header', 'hud');
   header.innerHTML = `
-    <button class="btn small ghost" data-act="lobby">← Lobby</button>
     <div class="titles"><h1></h1><p class="objective"></p></div>
+    <div class="hud-bar">
+    <button class="btn small ghost" data-act="lobby">← Lobby</button>
     <div class="hud-btns">
       <button class="btn small ghost" data-act="save" title="Save your progress now">Save</button>
       <button class="btn small ghost" data-act="how" title="How to play">?</button>
       <button class="btn small ghost" data-act="hints" title="Highlight things you haven't looked at yet (H)">✦ Hints</button>
       <button class="btn small ghost" data-act="mute"></button>
       <button class="btn small ghost" data-act="reset" title="Restart this room">↺</button>
+    </div>
     </div>`;
   header.querySelector('h1')!.textContent = room.name;
   header.querySelector('.objective')!.textContent = room.objective;
