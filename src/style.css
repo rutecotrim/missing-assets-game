@@ -94,7 +94,7 @@ button { font-family: inherit; }
 .lobby-head p { margin: 6px 0 0; text-align: center; color: #cbb9e6; }
 .carry { margin-bottom: 22px; }
 .carry-items { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.carry .empty { margin: 0; color: #6a5a82; }
+.carry .empty { margin: 0; color: #4d3b68; }
 .chip-item { display: flex; align-items: center; gap: 6px; background: #fff; padding: 4px 10px 4px 4px; box-shadow: 0 0 0 2px var(--ink); font-size: 15px; }
 .chip-item img { width: 32px; height: 32px; }
 .chip-item.faded { opacity: 0.55; }
@@ -168,7 +168,7 @@ body.dragging * { user-select: none; }
 /* ───────── inventory ───────── */
 .inventory { position: sticky; top: 8px; }
 .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.panel-head .count { font-family: var(--display); font-size: 10px; color: #7b6a96; }
+.panel-head .count { font-family: var(--font); font-weight: 700; font-size: 20px; letter-spacing: 1px; color: var(--ink); background: #fff; padding: 2px 8px; box-shadow: 0 0 0 2px var(--ink); }
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .slot {
   position: relative; aspect-ratio: 1; background: #e4cf9f; box-shadow: inset 0 0 0 2px #b79d62, inset 3px 3px 0 rgba(0,0,0,0.12);
@@ -177,7 +177,7 @@ body.dragging * { user-select: none; }
 .slot.filled { background: #fff8e4; box-shadow: 0 0 0 2px var(--ink); cursor: grab; }
 .slot.filled:hover { background: #fff; transform: translateY(-1px); }
 .slot img { width: 78%; height: 78%; pointer-events: none; }
-.slot .name { position: absolute; left: 0; right: 0; bottom: -1px; font-size: 11px; line-height: 1.05; text-align: center; background: var(--ink); color: var(--cream); padding: 1px 2px; opacity: 0; transition: opacity 0.1s; pointer-events: none; }
+.slot .name { position: absolute; left: 0; right: 0; bottom: -1px; font-size: 13px; line-height: 1.05; text-align: center; background: var(--ink); color: var(--cream); padding: 1px 2px; opacity: 0; transition: opacity 0.1s; pointer-events: none; }
 .slot.filled:hover .name, .slot.selected .name { opacity: 1; }
 .slot.selected { box-shadow: 0 0 0 3px var(--orange); background: #ffefc2; }
 .slot.armed { box-shadow: 0 0 0 3px var(--teal); animation: pulse2 0.8s steps(2) infinite; }
@@ -197,12 +197,12 @@ body.dragging * { user-select: none; }
 img.fly { position: fixed; width: 48px; height: 48px; z-index: 99; pointer-events: none; filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.4)); }
 
 .detail { margin-top: 12px; padding: 10px; background: #fff; box-shadow: 0 0 0 2px var(--ink); min-height: 126px; }
-.detail .empty { margin: 0; color: #7b6a96; font-size: 15px; }
+.detail .empty { margin: 0; color: #4d3b68; font-size: 15px; }
 .detail .dhead { display: flex; gap: 10px; align-items: center; }
 .detail img.big { width: 48px; height: 48px; flex: none; }
 .detail h3 { font-size: 11px; line-height: 1.4; margin-bottom: 4px; }
 .detail p { margin: 8px 0; font-size: 16px; line-height: 1.2; }
-.tag { font-family: var(--display); font-size: 8px; padding: 3px 5px; background: var(--ink); color: var(--cream); }
+.tag { font-family: var(--display); font-size: 9px; padding: 3px 5px; background: var(--ink); color: var(--cream); }
 .tag.k-key { background: #b8860b; }
 .tag.k-digital { background: #2f6fd6; }
 .tag.k-document { background: #8c2f39; }
@@ -210,7 +210,7 @@ img.fly { position: fixed; width: 48px; height: 48px; z-index: 99; pointer-event
 .tag.k-funny { background: #d6457a; }
 .tag.k-tool { background: #2d8a7e; }
 .detail .btns { display: flex; }
-.tip-line { margin: 10px 0 0; font-size: 14px; color: #6a5a82; line-height: 1.2; }
+.tip-line { margin: 10px 0 0; font-size: 16px; color: #4d3b68; line-height: 1.2; }
 
 /* ───────── modals ───────── */
 .modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgba(20, 10, 35, 0.72); padding: 16px; animation: fadeIn 0.15s; }
@@ -244,9 +244,9 @@ img.fly { position: fixed; width: 48px; height: 48px; z-index: 99; pointer-event
 .stats { display: flex; gap: 10px; justify-content: center; margin-bottom: 14px; }
 .stats div { background: #fff; padding: 10px 12px; box-shadow: 0 0 0 2px var(--ink); min-width: 96px; }
 .stats b { display: block; font-family: var(--display); font-size: 16px; color: var(--plum-2); }
-.stats span { font-size: 13px; color: #6a5a82; }
+.stats span { font-size: 15px; color: #4d3b68; }
 .kept { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 8px; }
-.next-hint { color: #6a5a82; font-size: 15px; }
+.next-hint { color: #4d3b68; font-size: 15px; }
 
 /* ───────── responsive ───────── */
 @media (max-width: 920px) {
