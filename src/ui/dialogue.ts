@@ -100,7 +100,16 @@ export class DialogueUI {
     const who = b.kind === 'line' ? b.who : this.session.dialogueNode(b).who;
     const text = b.kind === 'line' ? b.text : this.session.dialogueNode(b).text;
     const key = JSON.stringify(b);
-    if (key === this.key) return;
+    if (key === this.key) {
+      // Same beat, but more lines may have been queued behind it: keep the button label honest.
+      const more = this.el.querySelector('.more');
+      if (more) {
+        const last = this.session.beats.length === 1 && (b.kind === 'line' || !this.session.dialogueNode(b).next);
+        more.className = `more ${last ? 'close' : ''}`;
+        more.innerHTML = last ? 'Close <b>✕</b>' : 'Continue <b>▶</b>';
+      }
+      return;
+    }
     this.key = key;
     this.el.classList.remove('hidden');
     this.el.classList.toggle('you', who === 'You');

@@ -431,7 +431,8 @@ function startRoom(room: RoomDef, fresh = false) {
   // responsive pixel-perfect scaling
   const fit = () => {
     const dpr = window.devicePixelRatio || 1;
-    const availW = stageWrap.clientWidth;
+    const wide = window.matchMedia('(min-width: 921px)').matches;
+    const availW = Math.max(240, root.clientWidth - 24 - (wide ? 320 + 16 : 0));
     const availH = window.innerHeight - header.offsetHeight - 24;
     const scale = Math.floor(Math.min((availW * dpr) / LW, (availH * dpr) / LH));
     let w: number;
