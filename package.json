@@ -1,0 +1,21 @@
+{
+  "name": "missing-assets-game",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Missing Assets — Collect. Connect. Escape. An isometric pixel-art escape-room adventure set in a product design company.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@fontsource/pixelify-sans": "^5.3.0",
+    "@fontsource/press-start-2p": "^5.3.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}
