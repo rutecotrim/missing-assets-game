@@ -476,6 +476,7 @@ function startRoom(room: RoomDef, fresh = false) {
     if (!profile.completed.includes(room.id)) profile.completed.push(room.id);
     delete profile.rooms[room.id];
     profile.lastRoom = undefined;
+    profile.lastSaved = Date.now();
     saveProfile();
     audio.sfx('unlock');
     const optionalFound = room.optional.filter((id) => gained.includes(id) || profile.collection.includes(id) || id === 'golden_sticky' && session.has(id)).length;
@@ -491,6 +492,7 @@ function startRoom(room: RoomDef, fresh = false) {
           <div><b>${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}</b><span>time</span></div>
         </div>
         <div class="kept"></div>
+        <p class="saved-note">✓ Progress saved automatically</p>
         <p class="next-hint">Next up: more rooms, more chaos. Your kept items travel with you.</p>
         <div class="btns"><button class="btn big" data-act="lobby">Back to the lobby</button><button class="btn ghost" data-act="again">Replay</button></div>
       </div>`;
