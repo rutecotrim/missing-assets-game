@@ -13,6 +13,7 @@ import { iconImg } from './engine/icons';
 import { InventoryUI } from './ui/inventory';
 import { DialogueUI } from './ui/dialogue';
 import { openKeypad, openScreen } from './ui/overlays';
+import { confirmDialog, howToPlay } from './ui/dialogs';
 
 // ───────────────────────── profile ─────────────────────────
 
@@ -56,8 +57,40 @@ function show(node: HTMLElement, cleanup?: () => void) {
 
 // ───────────────────────── title ─────────────────────────
 
+function hasSave() {
+  return profile.completed.length > 0 || Object.keys(profile.rooms).length > 0 || profile.carry.length > 0;
+}
+
+function levelNo(id: string): number {
+  return CATALOG.findIndex((c) => c.id === id) + 1;
+}
+
+function saveSummary(): string {
+  const room = profile.lastRoom && profile.rooms[profile.lastRoom] ? PLAYABLE[profile.lastRoom] : undefined;
+  const bits = [room ? `Level ${levelNo(room.id)}: ${room.name} (in progress)` : 'In the Lobby', `${profile.completed.length}/${CATALOG.length} rooms escaped`];
+  if (profile.lastSaved) bits.push(`saved ${new Date(profile.lastSaved).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}`);
+  return bits.join(' · ');
+}
+
+function continueGame() {
+  const room = profile.lastRoom && profile.rooms[profile.lastRoom] ? PLAYABLE[profile.lastRoom] : undefined;
+  if (room) startRoom(room);
+  else lobby();
+}
+
+function wipeSave() {
+  profile.completed = [];
+  profile.carry = [];
+  profile.collection = [];
+  profile.rooms = {};
+  profile.lastRoom = undefined;
+  profile.lastSaved = undefined;
+  saveProfile();
+}
+
 function titleScreen() {
   const s = el('main', 'screen titlescreen');
+  const save = hasSave();
   s.innerHTML = `
     <div class="logo">
       <span class="pre">THE ESCAPE ROOM THAT'S ALSO YOUR CALENDAR</span>
@@ -66,30 +99,34 @@ function titleScreen() {
     </div>
     <div class="title-art" aria-hidden="true"></div>
     <div class="menu">
-      <button class="btn big" data-act="play">${profile.completed.length ? 'Continue' : 'Start the meeting'}</button>
-      ${profile.completed.length || Object.keys(profile.rooms).length ? '<button class="btn ghost" data-act="reset">New game</button>' : ''}
+      ${save ? '<button class="btn big" data-act="continue">Continue saved game</button><p class="save-info"></p>' : ''}
+      <button class="btn ${save ? 'ghost' : 'big'}" data-act="new">New game</button>
+      <button class="btn ghost" data-act="how">How to play</button>
     </div>
     <p class="credit">An isometric adventure about surviving product design.</p>`;
+  if (save) s.querySelector('.save-info')!.textContent = saveSummary();
   const art = s.querySelector('.title-art')!;
   for (const icon of ['usb', 'notes', 'coffee', 'badge', 'tape', 'duck', 'key', 'flow']) {
     const i = iconImg(icon, 'float');
     i.style.setProperty('--d', `${Math.random() * 3}s`);
     art.appendChild(i);
   }
-  s.querySelector('[data-act=play]')!.addEventListener('click', () => {
+  const host = el('div', 'modal-host');
+  s.appendChild(host);
+  s.querySelector('[data-act=continue]')?.addEventListener('click', () => {
     audio.sfx('pickup');
-    lobby();
+    continueGame();
   });
-  s.querySelector('[data-act=reset]')?.addEventListener('click', () => {
-    if (confirm('Erase all progress and start over?')) {
-      profile.completed = [];
-      profile.carry = [];
-      profile.collection = [];
-      profile.rooms = {};
-      saveProfile();
-      titleScreen();
-    }
+  s.querySelector('[data-act=new]')!.addEventListener('click', () => {
+    const begin = () => {
+      wipeSave();
+      audio.sfx('pickup');
+      lobby();
+    };
+    if (save) confirmDialog(host, 'START A NEW GAME?', 'This erases your saved progress, including items you carried over.', 'Erase and start', begin);
+    else begin();
   });
+  s.querySelector('[data-act=how]')!.addEventListener('click', () => howToPlay(host));
   show(s);
 }
 
@@ -171,6 +208,7 @@ function lobby() {
 
 function startRoom(room: RoomDef, fresh = false) {
   audio.playTrack(room.music);
+  profile.lastRoom = room.id;
   const finished = profile.completed.includes(room.id);
   let state = !fresh && !finished ? profile.rooms[room.id] : undefined;
   const isNew = !state;
@@ -186,6 +224,8 @@ function startRoom(room: RoomDef, fresh = false) {
     <button class="btn small ghost" data-act="lobby">← Lobby</button>
     <div class="titles"><h1></h1><p class="objective"></p></div>
     <div class="hud-btns">
+      <button class="btn small ghost" data-act="save" title="Save your progress now">Save</button>
+      <button class="btn small ghost" data-act="how" title="How to play">?</button>
       <button class="btn small ghost" data-act="hints" title="Highlight things you haven't looked at yet (H)">✦ Hints</button>
       <button class="btn small ghost" data-act="mute"></button>
       <button class="btn small ghost" data-act="reset" title="Restart this room">↺</button>
@@ -353,7 +393,15 @@ function startRoom(room: RoomDef, fresh = false) {
       saveProfile();
       paintMute();
     }
-    if (act === 'reset' && confirm('Restart this room? Items found in it will be put back.')) startRoom(room, true);
+    if (act === 'save') {
+      profile.lastRoom = room.id;
+      profile.lastSaved = Date.now();
+      saveProfile();
+      toast(`Saved: Level ${levelNo(room.id)}, ${room.name}`, 'good');
+      audio.sfx('good');
+    }
+    if (act === 'how') howToPlay(modalHost);
+    if (act === 'reset') confirmDialog(modalHost, 'RESTART THIS ROOM?', 'Everything you found in this room is put back. Items you carried in stay with you.', 'Restart room', () => startRoom(room, true));
   });
   const onKey = (e: KeyboardEvent) => {
     if (e.key.toLowerCase() === 'h' && !session.busy) header.querySelector<HTMLElement>('[data-act=hints]')!.click();
@@ -413,6 +461,7 @@ function startRoom(room: RoomDef, fresh = false) {
     for (const id of carried) if (!profile.carry.includes(id)) profile.carry.push(id);
     if (!profile.completed.includes(room.id)) profile.completed.push(room.id);
     delete profile.rooms[room.id];
+    profile.lastRoom = undefined;
     saveProfile();
     audio.sfx('unlock');
     const optionalFound = room.optional.filter((id) => gained.includes(id) || profile.collection.includes(id) || id === 'golden_sticky' && session.has(id)).length;

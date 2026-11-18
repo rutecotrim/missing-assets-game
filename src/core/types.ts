@@ -244,6 +244,9 @@ export interface Profile {
   collection: string[];
   rooms: Record<string, RoomState>;
   muted: boolean;
+  /** Room being played when the player last saved or left. */
+  lastRoom?: string;
+  lastSaved?: number;
 }
 
 // ───────────────────────── Events & beats ─────────────────────────
