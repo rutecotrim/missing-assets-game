@@ -5,7 +5,7 @@ import './style.css';
 
 import { Session, freshRoomState } from './core/session';
 import type { GameEvent, Profile, RoomDef } from './core/types';
-import { CATALOG, PLAYABLE, THEMES, TIERS } from './data/rooms';
+import { CATALOG, PLAYABLE, TIERS } from './data/rooms';
 import { ITEMS } from './data/items';
 import { Scene, LH, LW } from './engine/scene';
 import { audio } from './engine/audio';
@@ -186,9 +186,8 @@ function lobby() {
       const room = PLAYABLE[entry.id];
       const finished = profile.completed.includes(entry.id);
       const card = el('button', 'room-card');
-      card.innerHTML = `<span class="rn"></span><span class="theme t-${entry.theme}"></span><span class="rs"></span>`;
+      card.innerHTML = `<span class="rn"></span><span class="rs"></span>`;
       (card.querySelector('.rn') as HTMLElement).textContent = entry.name;
-      (card.querySelector('.theme') as HTMLElement).textContent = THEMES[entry.theme].label;
       const status = card.querySelector('.rs') as HTMLElement;
       if (room) {
         card.classList.add(finished ? 'done' : 'open');

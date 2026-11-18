@@ -21,13 +21,6 @@ body {
   font-size: 17px;
   color: var(--cream);
   background: var(--ink);
-  background-image:
-    radial-gradient(circle at 20% 10%, rgba(255, 138, 61, 0.12), transparent 40%),
-    radial-gradient(circle at 85% 90%, rgba(63, 183, 168, 0.14), transparent 45%),
-    linear-gradient(45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.025) 75%),
-    linear-gradient(45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.025) 75%);
-  background-size: auto, auto, 16px 16px, 16px 16px;
-  background-position: 0 0, 0 0, 0 0, 8px 8px;
   overflow-x: hidden;
   -webkit-font-smoothing: none;
   font-variant-ligatures: none;
@@ -300,13 +293,9 @@ img.fly { position: fixed; width: 48px; height: 48px; z-index: 99; pointer-event
 .chaos-4 .meter i.on, .chaos-5 .meter i.on { background: var(--red); }
 .chaos-5 .tier-head h2 { color: var(--pink); animation: wobble 0.6s steps(2) infinite; }
 @keyframes wobble { 50% { transform: translateX(2px) rotate(0.4deg); } }
-.theme { align-self: flex-start; font-family: var(--display); font-size: 8px; padding: 3px 5px; background: var(--ink); color: var(--cream); }
-.t-pm { background: #b8860b; } .t-ux { background: #7b4fb2; } .t-research { background: #2d8a7e; } .t-eng { background: #2f6fd6; } .t-chaos { background: #c93a6a; }
-.room-card .theme { color: #fff; }
 
 .meter.zen i.on { background: var(--teal); }
 .chaos-0 .tier-head h2 { color: #7bf0d0; }
-.t-balance { background: #2d9c5a; }
 
 /* Top bar: title on its own line, buttons underneath */
 .hud { flex-direction: column; align-items: stretch; flex-wrap: nowrap; gap: 8px; }
@@ -336,3 +325,13 @@ img.fly { position: fixed; width: 48px; height: 48px; z-index: 99; pointer-event
   .layout { flex-direction: column; align-items: center; }
   .inventory { width: 100%; max-width: 560px; }
 }
+
+/* Calmer lobby: one accent colour */
+.floor h2, .chaos-0 .tier-head h2, .chaos-5 .tier-head h2 { color: var(--cream); animation: none; }
+.tier-head p { color: #b9a8d4; }
+.meter i.on, .chaos-3 .meter i.on, .chaos-4 .meter i.on, .chaos-5 .meter i.on, .meter.zen i.on { background: var(--mustard); }
+.meter.zen i.on { background: transparent; box-shadow: 0 0 0 2px var(--mustard); }
+.room-card.done { background: var(--plum-2); color: var(--cream); }
+.room-card.done .rs { color: var(--mustard); }
+.room-card .rs { letter-spacing: 0.5px; }
+.tag.k-key, .tag.k-digital, .tag.k-document, .tag.k-clue, .tag.k-funny, .tag.k-tool { background: var(--ink); }
