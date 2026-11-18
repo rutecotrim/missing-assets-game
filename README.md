@@ -4,7 +4,7 @@ An isometric pixel-art escape-room adventure set inside a product design company
 You are a UX/UI designer trapped in meeting rooms. Explore, collect items, use them on things,
 use them on the world, and unlock the exit. No quizzes — just poking at things.
 
-**Playable now:** the Stakeholders Room (+ title screen and a lobby listing all 27 planned rooms).
+**Playable now:** the Stakeholders Room (+ title screen and a lobby listing all planned rooms).
 
 ```bash
 npm install
