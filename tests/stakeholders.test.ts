@@ -153,3 +153,13 @@ describe('Stakeholders Room', () => {
     expect(s.tryCode('cab', '9999').ok).toBe(false);
   });
 });
+
+describe('backpack size', () => {
+  it('uses the room slot count and refuses overflow', () => {
+    const { s } = start();
+    expect(s.capacity).toBe(12);
+    for (const id of ['notes', 'usb', 'tape', 'torn_flow', 'mug', 'badge', 'stress_ball', 'rubber_duck', 'golden_sticky', 'biscuits', 'exit_key', 'coffee'].map((i) => (i === 'notes' ? 'meeting_notes' : i))) s.addItem(id);
+    expect(s.inventory.length).toBe(12);
+    expect(s.addItem('user_flow')).toBe(false);
+  });
+});

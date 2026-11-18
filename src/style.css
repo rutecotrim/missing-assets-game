@@ -256,7 +256,7 @@ img.fly { position: fixed; width: 48px; height: 48px; z-index: 99; pointer-event
 @media (max-width: 920px) {
   .layout { grid-template-columns: 1fr; }
   .inventory { position: static; }
-  .grid { grid-template-columns: repeat(8, 1fr); }
+  .grid { grid-template-columns: repeat(6, 1fr); }
   .hud .objective { white-space: normal; }
 }
 @media (max-width: 560px) {

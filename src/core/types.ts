@@ -205,6 +205,8 @@ export interface RoomDef {
   tagline: string;
   /** Shown in the HUD. */
   objective: string;
+  /** Backpack size for this room (default 16). */
+  slots?: number;
   /** Track id from data/music.ts. */
   music: string;
   size: { w: number; d: number };

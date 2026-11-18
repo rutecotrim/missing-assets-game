@@ -1,5 +1,4 @@
 import type { Session } from '../core/session';
-import { INVENTORY_SIZE } from '../core/session';
 import { ITEMS } from '../data/items';
 import { iconImg } from '../engine/icons';
 
@@ -97,9 +96,9 @@ export class InventoryUI {
       this.armedItem = null;
       this.hooks.armed(null);
     }
-    this.count.textContent = `${inv.length}/${INVENTORY_SIZE}`;
+    this.count.textContent = `${inv.length}/${this.session.capacity}`;
     this.grid.textContent = '';
-    for (let i = 0; i < INVENTORY_SIZE; i++) {
+    for (let i = 0; i < this.session.capacity; i++) {
       const id = inv[i];
       const slot = document.createElement('div');
       slot.className = 'slot';

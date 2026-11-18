@@ -19,7 +19,7 @@ import type {
 import { ITEMS } from '../data/items';
 import { RECIPES } from '../data/recipes';
 
-export const INVENTORY_SIZE = 16;
+export const DEFAULT_SLOTS = 16;
 
 export function freshRoomState(room: RoomDef, carry: string[]): RoomState {
   const hidden: Record<string, boolean> = {};
@@ -78,6 +78,9 @@ export class Session {
   }
   has(item: string): boolean {
     return this.state.inventory.includes(item);
+  }
+  get capacity(): number {
+    return this.room.slots ?? DEFAULT_SLOTS;
   }
   get inventory(): string[] {
     return this.state.inventory;
@@ -322,7 +325,7 @@ export class Session {
 
   addItem(id: string, from?: string): boolean {
     if (this.has(id)) return false;
-    if (this.state.inventory.length >= INVENTORY_SIZE) {
+    if (this.state.inventory.length >= this.capacity) {
       this.emit({ type: 'toast', text: 'Inventory full! Drop a hobby first.', tone: 'bad' });
       return false;
     }

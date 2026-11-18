@@ -644,6 +644,7 @@ export const stakeholdersRoom: RoomDef = {
   tagline: 'The meeting that could have been an email.',
   objective: 'Find a way out of the alignment meeting.',
   music: 'stakeholders',
+  slots: 12,
   size: { w: 10, d: 10 },
   palette: {
     floorA: '#5f8f9b',
