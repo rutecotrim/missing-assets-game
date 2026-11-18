@@ -239,13 +239,15 @@ function startRoom(room: RoomDef, fresh = false) {
   const layout = el('div', 'layout');
   const stageWrap = el('div', 'stage-wrap');
   const stage = el('div', 'stage');
-  stageWrap.appendChild(stage);
+  const col = el('div', 'main-col');
+  col.append(header, stage);
+  stageWrap.appendChild(col);
   const toasts = el('div', 'toasts');
   const tip = el('div', 'tip hidden');
   const status = el('div', 'status hidden');
   stage.append(toasts, tip, status);
   layout.appendChild(stageWrap);
-  root.append(header, layout);
+  root.append(layout);
   const modalHost = el('div', 'modal-host');
   root.appendChild(modalHost);
 
@@ -431,6 +433,7 @@ function startRoom(room: RoomDef, fresh = false) {
     if (scale >= 1 && exact - scale < 0.4) w = (LW * scale) / dpr;
     else w = (LW * exact) / dpr;
     stage.style.width = `${Math.floor(w)}px`;
+    col.style.width = `${Math.floor(w)}px`;
     stage.style.height = `${Math.floor((w * LH) / LW)}px`;
   };
   const ro = new ResizeObserver(fit);
